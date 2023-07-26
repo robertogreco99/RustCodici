@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>polimorfismo.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="polimorfismo">Polimorfismo</h1>
+<ul>
+<li>la necessità di minimizzare il codice scritto spinge verso l’identificazione di pattern comuni</li>
+<li>La soluzione individuata è il <strong>polimorfismo</strong>: capacità offerta dai linguaggi di associare comportamenti comuni ad un insieme di tipi differenti
+<ul>
+<li>si può implementare con programmazione generica, interfacce o ereditarietà</li>
+</ul>
+</li>
+</ul>
+<h2 id="polimorfismo-nei-vari-linguaggi">Polimorfismo nei vari linguaggi</h2>
+<ul>
+<li>in c non c'è supporto sintattico specifico per implementare il polimorfismo</li>
+<li>il linguaggio <em><strong>C++</strong></em> supporta il concetto di ereditarietà e il concetto di metodo virtuale</li>
+</ul>
+<h2 id="polimorfismo-in-c">Polimorfismo in c++</h2>
+<ul>
+<li>Un metodo così etichettato viene chiamato in modo indiretto, passando attraverso una struttura intermedia detta VTABLE</li>
+<li>Questa contiene un array con l’indirizzo effettivo dei metodi virtuali che la classe implementa</li>
+<li>Ogni istanza di una classe dotata di metodi virtuali dispone di un campo nascosto che contiene il puntatore alla VTABLE (costo in termini di memoria)
+-Quando un metodo virtuale viene invocato, il compilatore genera le istruzioni necessarie ad accedere alla VTABLE e prelevare l’indirizzo da chiamare (costo in termini di tempo)s</li>
+</ul>
+<h3 id="polimorfismo-in-c-esempio">Polimorfismo in c++ esempio</h3>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+   <span class="hljs-comment">// Alfa a;</span>
+   <span class="hljs-comment">//std::cout&lt;&lt; a.m()&lt;&lt;std::endl;</span>
+   <span class="hljs-comment">//std::cout&lt;&lt;sizeof(a)&lt;&lt;std::endl;</span>
+
+   <span class="hljs-comment">//costruire oggetto sull'heap</span>
+   Alfa* ptr1 = <span class="hljs-keyword">new</span> Alfa; 
+   <span class="hljs-comment">//un puntatore ad alfa può contenere un puntatore a beta</span>
+   Beta* ptr2= <span class="hljs-keyword">new</span> Beta;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt; ptr1-&gt;m()&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt; ptr2-&gt;m()&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"sizeof(*ptr1): "</span>&lt;&lt;<span class="hljs-keyword">sizeof</span>(*ptr1)&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"sizeof(*ptr2): "</span>&lt;&lt;<span class="hljs-keyword">sizeof</span>(*ptr2)&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+
+   <span class="hljs-keyword">delete</span> ptr1; <span class="hljs-comment">//passaggio necessario</span>
+   <span class="hljs-keyword">delete</span> ptr2; <span class="hljs-comment">//passaggio necessario</span>
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+
+    <span class="hljs-comment">//viene stampato:</span>
+    <span class="hljs-number">1</span>
+    <span class="hljs-number">2</span>
+    <span class="hljs-keyword">sizeof</span>(*ptr1): <span class="hljs-number">4</span>
+    <span class="hljs-keyword">sizeof</span>(*ptr2): <span class="hljs-number">16</span>
+
+}
+<span class="hljs-comment">// sottocaso 2</span>
+Alfa* ptr2 = <span class="hljs-keyword">new</span> Beta;
+ <span class="hljs-comment">//in output </span>
+<span class="hljs-number">1</span>
+<span class="hljs-number">1</span>
+<span class="hljs-keyword">sizeof</span>(*ptr1): <span class="hljs-number">4</span>
+<span class="hljs-keyword">sizeof</span>(*ptr2): <span class="hljs-number">4</span>
+
+<span class="hljs-comment">// sottocaso 3: gli voglio dire che uso polimorfismo</span>
+<span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">public</span>:
+    <span class="hljs-comment">//m su alfa torna 1, su b torna 2// cambia sizeof</span>
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span>  <span class="hljs-keyword">int</span> <span class="hljs-title">m</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+
+<span class="hljs-comment">//ora in ouput</span>
+<span class="hljs-number">1</span>
+<span class="hljs-number">1</span>
+<span class="hljs-keyword">sizeof</span>(*ptr1): <span class="hljs-number">16</span>
+<span class="hljs-keyword">sizeof</span>(*ptr2): <span class="hljs-number">16</span>
+<span class="hljs-comment">//perchè da 16 è diventato 4 =&gt;  quando in una classe compare almeno un metodo marcato virtual: gli oggetti instanza della classe acquisiscono un campo in più : vtable: tabella dei metodi virtuali: servono a risolvere gli indirizzi dei metodi</span>
+<span class="hljs-comment">// c'è una vtable per classe</span>
+<span class="hljs-comment">//compilatore vede virtual: il primo campo di ptr è puntatore alla vtable(): si prende l'indirizzo del metodo</span>
+<span class="hljs-comment">//8 per tenere la vtable, 4 per l'intero e 4 di padding (per questo 16)</span>
+
+<span class="hljs-comment">// cambio aggiungendo un metodo virtual</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Alfa</span> {</span>
+    <span class="hljs-comment">//bool  b;</span>
+    <span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">public</span>:
+    <span class="hljs-comment">//m su alfa torna 1, su b torna 2// cambia sizeof</span>
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span>  <span class="hljs-keyword">int</span> <span class="hljs-title">m</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">unsigned</span> <span class="hljs-title">size</span><span class="hljs-params">()</span> </span>{<span class="hljs-keyword">return</span> <span class="hljs-keyword">sizeof</span>(*<span class="hljs-keyword">this</span>)}
+};
+<span class="hljs-class"><span class="hljs-keyword">class</span>  <span class="hljs-title">Beta</span> :</span> <span class="hljs-keyword">public</span> Alfa{
+    <span class="hljs-keyword">double</span> d;
+    <span class="hljs-keyword">public</span>:
+     <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">m</span><span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;}
+    <span class="hljs-function"><span class="hljs-keyword">unsigned</span> <span class="hljs-title">size</span><span class="hljs-params">()</span> </span>{<span class="hljs-keyword">return</span> <span class="hljs-keyword">sizeof</span>(*<span class="hljs-keyword">this</span>);}
+};
+# Polimorfismo
+- la necessità di minimizzare il codice scritto spinge verso l’identificazione di pattern comuni
+- La soluzione individuata è il **polimorfismo**: capacità offerta dai linguaggi di associare comportamenti comuni ad un insieme di tipi differenti 
+   - si può implementare con programmazione generica, interfacce o ereditarietà
+## Polimorfismo nei vari linguaggi
+- in c non c<span class="hljs-number">'</span>è supporto sintattico specifico per implementare il polimorfismo
+- il linguaggio ***C++*** supporta il concetto di ereditarietà e il concetto di metodo virtuale
+
+## Polimorfismo in c++ 
+- Un metodo <span class="hljs-built_in">cos</span>ì etichettato viene chiamato in modo indiretto, passando attraverso una struttura intermedia detta VTABLE
+- Questa contiene un <span class="hljs-built_in">array</span> con l’indirizzo effettivo dei metodi virtuali che la classe implementa
+- <span class="hljs-function">Ogni istanza di una classe dotata di metodi virtuali dispone di un campo nascosto che contiene il puntatore alla <span class="hljs-title">VTABLE</span> <span class="hljs-params">(costo in termini di memoria)</span>
+-Quando un metodo virtuale viene invocato, il compilatore genera le istruzioni necessarie ad accedere alla VTABLE e prelevare l’indirizzo da <span class="hljs-title">chiamare</span> <span class="hljs-params">(costo in termini di tempo
+### Polimorfismo in c++ esempio
+
+```C++
+<span class="hljs-keyword">int</span> main() {
+   <span class="hljs-comment">// Alfa a;</span>
+   <span class="hljs-comment">//std::cout&lt;&lt; a.m()&lt;&lt;std::endl;</span>
+   <span class="hljs-comment">//std::cout&lt;&lt;sizeof(a)&lt;&lt;std::endl;</span>
+
+   <span class="hljs-comment">//costruire oggetto sull'heap</span>
+   Alfa* ptr1 = <span class="hljs-keyword">new</span> Alfa; 
+   <span class="hljs-comment">//un puntatore ad alfa può contenere un puntatore a beta</span>
+   Beta* ptr2= <span class="hljs-keyword">new</span> Beta;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt; ptr1-&gt;m()&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt; ptr2-&gt;m()&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"sizeof(*ptr1): "</span>&lt;&lt;<span class="hljs-keyword">sizeof</span>(*ptr1)&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+   <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"sizeof(*ptr2): "</span>&lt;&lt;<span class="hljs-keyword">sizeof</span>(*ptr2)&lt;&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">endl</span>;
+
+   <span class="hljs-keyword">delete</span> ptr1; <span class="hljs-comment">//passaggio necessario</span>
+   <span class="hljs-keyword">delete</span> ptr2; <span class="hljs-comment">//passaggio necessario</span>
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+
+    <span class="hljs-comment">//viene stampato:</span>
+    <span class="hljs-number">1</span>
+    <span class="hljs-number">2</span>
+    <span class="hljs-keyword">sizeof</span>(*ptr1): <span class="hljs-number">4</span>
+    <span class="hljs-keyword">sizeof</span>(*ptr2): <span class="hljs-number">16</span>
+
+}
+<span class="hljs-comment">// sottocaso 2</span>
+Alfa* ptr2 = <span class="hljs-keyword">new</span> Beta;
+ <span class="hljs-comment">//in output </span>
+<span class="hljs-number">1</span>
+<span class="hljs-number">1</span>
+<span class="hljs-keyword">sizeof</span>(*ptr1): <span class="hljs-number">4</span>
+<span class="hljs-keyword">sizeof</span>(*ptr2): <span class="hljs-number">4</span>
+
+<span class="hljs-comment">// sottocaso 3: gli voglio dire che uso polimorfismo</span>
+<span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">public</span>:
+    <span class="hljs-comment">//m su alfa torna 1, su b torna 2// cambia sizeof</span>
+    <span class="hljs-keyword">virtual</span>  <span class="hljs-keyword">int</span> m(){
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+
+<span class="hljs-comment">//ora in ouput</span>
+<span class="hljs-number">1</span>
+<span class="hljs-number">1</span>
+<span class="hljs-keyword">sizeof</span>(*ptr1): <span class="hljs-number">16</span>
+<span class="hljs-keyword">sizeof</span>(*ptr2): <span class="hljs-number">16</span>
+<span class="hljs-comment">//perchè da 16 è diventato 4 =&gt;  quando in una classe compare almeno un metodo marcato virtual: gli oggetti instanza della classe acquisiscono un campo in più : vtable: tabella dei metodi virtuali: servono a risolvere gli indirizzi dei metodi</span>
+<span class="hljs-comment">// c'è una vtable per classe</span>
+<span class="hljs-comment">//compilatore vede virtual: il primo campo di ptr è puntatore alla vtable(): si prende l'indirizzo del metodo</span>
+<span class="hljs-comment">//8 per tenere la vtable, 4 per l'intero e 4 di padding (per questo 16)</span>
+
+<span class="hljs-comment">// cambio aggiungendo un metodo virtual</span>
+class Alfa {
+    <span class="hljs-comment">//bool  b;</span>
+    <span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">public</span>:
+    <span class="hljs-comment">//m su alfa torna 1, su b torna 2// cambia sizeof</span>
+    <span class="hljs-keyword">virtual</span>  <span class="hljs-keyword">int</span> m(){
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">unsigned</span> <span class="hljs-built_in">size</span>() {<span class="hljs-keyword">return</span> <span class="hljs-keyword">sizeof</span>(*<span class="hljs-keyword">this</span>)}
+};
+class  Beta : <span class="hljs-keyword">public</span> Alfa{
+    <span class="hljs-keyword">double</span> d;
+    <span class="hljs-keyword">public</span>:
+     <span class="hljs-keyword">int</span> m() { <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;}
+    <span class="hljs-keyword">unsigned</span> <span class="hljs-built_in">size</span>() {<span class="hljs-keyword">return</span> <span class="hljs-keyword">sizeof</span>(*<span class="hljs-keyword">this</span>);}
+};
+
+res:
+<span class="hljs-number">1</span>
+<span class="hljs-number">1</span>
+<span class="hljs-number">16</span>
+<span class="hljs-number">24</span> <span class="hljs-comment">//8 vtable 4 padding 8 double 4 int ereditato </span>
+
+</span></span></div></code></pre>
+<h3 id="esempio-slide">Esempio slide</h3>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/a.png" alt="">
+<img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/b.png" alt="">
+<img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/c.png" alt=""></p>
+<ul>
+<li>16 byte per alfa : 8 per la vtable  + booleano + eventuale padding</li>
+<li>24 byte per beta : 8 vtable ( ha una sola entry : non c'è più il vecchio codice ora torna 2) , booleano b + intero</li>
+</ul>
+<h2 id="polimorfismo-in-c">Polimorfismo in c++</h2>
+<ul>
+<li>Solo le funzioni membro denominate “virtual” sono polimorfiche
+La presenza di metodi virtuali comporta una penalità in termini di spazio (ogni istanza contiene un puntatore alla VTABLE) e di tempo (ogni chiamata deve essere risolta passando tramite la VTABLE)
+Una funzione membro non virtuale non ha costi aggiuntivi di chiamata</li>
+<li>E’ possibile omettere il corpo di una funzione virtuale, dichiarandola  “ = 0; ”
+Questo rende la funzione virtuale astratta</li>
+<li>Se una classe contiene almeno una funzione virtuale astratta diventa una classe astratta
+Classi di questo tipo non possono essere istanziate direttamente, ma possono essere usate come classi base da cui derivare sottoclassi concrete, purché dotate di un’implementazione per tutti i metodi astratti</li>
+<li>Una classe astratta pura contiene solo funzioni virtuali astratte
+Equivalente a quella che in altri linguaggi di programmazione si chiamano interfacce (es. Java, C#)</li>
+</ul>
+<h1 id="tratti">Tratti</h1>
+<ul>
+<li>Non c'è l'ereditarietà in rust</li>
+<li>Equivalente in rust delle interfacce di java</li>
+<li>Un tratto esprime la capacità di un tipo di eseguire una certa funzionalità :
+<ul>
+<li>Un tipo che implementa</li>
+</ul>
+<pre class="hljs"><code><div>std::io::Write 
+</div></code></pre>
+può scrivere dei byte.</li>
+</ul>
+<p>Un tipo che implementa std::iter::Iterator può produrre una sequenza di valori. Un tipo che implementa std::clone::Clone può creare copie del proprio valore. Un tipo che implementa std::fmt::Debug può essere stampato tramite println!() usando il formato {:?}.</p>
+<ul>
+<li>A differenza di quanto accade in C++ o Java, se si invoca su un valore una funzione relativa ad un tratto, <strong>non si ha - normalmente - un costo aggiuntivo.</strong>  Né gli oggetti che implementano tratti hanno una penalità in termini di memoria per ospitare il puntatore alla VTABLE ( ad esempio enum non ha vtable). Tale costo si presenta solo quando si crea esplicitamente un riferimento dinamico (<strong>&amp;dyn TraitName</strong>) {voglio tornare qualcosa su cui scrivere}</li>
+</ul>
+<h1 id="definire-e-usare-un-tratto">Definire e usare un tratto</h1>
+<ul>
+<li>Si definisce un tratto con la sintassi</li>
+</ul>
+<pre class="hljs"><code><div> <span class="hljs-class"><span class="hljs-keyword">trait</span> <span class="hljs-title">SomeTrait</span></span> { <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">someOperation</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; SomeResult; … }
+</div></code></pre>
+<ul>
+<li>Una struttura dati concreta, come struct od enum, può esplicitamente dichiarare di implementare un dato tratto attraverso il blocco seguente</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-keyword">impl</span> SomeTrait <span class="hljs-keyword">for</span> SomeType { … } 
+</div></code></pre>
+<ul>
+<li>Dato un valore il cui tipo implementa un tratto, è possibile invocare su tale valore i metodi del tratto, con la normale sintassi basata sul ‘.’
+<ul>
+<li>A condizione che il tratto sia stato dichiarato nello stesso crate o che sia stata importato attraverso il costrutto<pre class="hljs"><code><div>   <span class="hljs-keyword">use</span> SomeNamespace::SomeTrait;
+</div></code></pre>
+</li>
+<li>Alcuni tratti (come Clone e Iter) non necessitano di essere importati esplicitamente in quanto fanno parte di una porzione di codice della libreria standard (il cosiddetto preludio) che viene importato automaticamente in ogni crate</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/d.png" alt=""></p>
+<ul>
+<li>Self è una metavariabile : si riferisce al tipo che la implementerà</li>
+</ul>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/e.png" alt=""></p>
+<ul>
+<li>Non so cosa ritornare : interi ritornano zero, stringhe una stringa vuota</li>
+</ul>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/f.png" alt=""></p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/g.png" alt="">
+-Chi implementa il tratto : deve anche dire cos'è il tipo per lui</p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/h.png" alt=""></p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/i.png" alt=""></p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/k.png" alt="">
+res:
+1
+1
+16
+24 //8 vtable 4 padding 8 double 4 int ereditato</p>
+<pre class="hljs"><code><div>
+### Esempio slide
+
+![](a.png)
+![](b.png)
+![](c.png)
+
+- 16 byte per alfa : 8 per la vtable  + booleano + eventuale padding
+- 24 byte per beta : 8 vtable ( ha una sola entry : non c'è più il vecchio codice ora torna 2) , booleano b + intero
+
+## Polimorfismo in c++
+
+- Solo le funzioni membro denominate “virtual” sono polimorfiche
+La presenza di metodi virtuali comporta una penalità in termini di spazio (ogni istanza contiene un puntatore alla VTABLE) e di tempo (ogni chiamata deve essere risolta passando tramite la VTABLE)
+Una funzione membro non virtuale non ha costi aggiuntivi di chiamata
+- E’ possibile omettere il corpo di una funzione virtuale, dichiarandola  “ = 0; ”
+Questo rende la funzione virtuale astratta
+- Se una classe contiene almeno una funzione virtuale astratta diventa una classe astratta
+Classi di questo tipo non possono essere istanziate direttamente, ma possono essere usate come classi base da cui derivare sottoclassi concrete, purché dotate di un’implementazione per tutti i metodi astratti
+- Una classe astratta pura contiene solo funzioni virtuali astratte
+Equivalente a quella che in altri linguaggi di programmazione si chiamano interfacce (es. Java, C#)
+
+
+# Tratti
+- Non c'è l'ereditarietà in rust
+- Equivalente in rust delle interfacce di java 
+- Un tratto esprime la capacità di un tipo di eseguire una certa funzionalità : 
+   - Un tipo che implementa 
+    ```rust 
+   std::io::Write 
+</div></code></pre>
+<p>può scrivere dei byte.</p>
+<p>Un tipo che implementa std::iter::Iterator può produrre una sequenza di valori. Un tipo che implementa std::clone::Clone può creare copie del proprio valore. Un tipo che implementa std::fmt::Debug può essere stampato tramite println!() usando il formato {:?}.</p>
+<ul>
+<li>A differenza di quanto accade in C++ o Java, se si invoca su un valore una funzione relativa ad un tratto, <strong>non si ha - normalmente - un costo aggiuntivo.</strong>  Né gli oggetti che implementano tratti hanno una penalità in termini di memoria per ospitare il puntatore alla VTABLE ( ad esempio enum non ha vtable). Tale costo si presenta solo quando si crea esplicitamente un riferimento dinamico (<strong>&amp;dyn TraitName</strong>) {voglio tornare qualcosa su cui scrivere}</li>
+</ul>
+<h1 id="definire-e-usare-un-tratto">Definire e usare un tratto</h1>
+<ul>
+<li>Si definisce un tratto con la sintassi</li>
+</ul>
+<pre class="hljs"><code><div> <span class="hljs-class"><span class="hljs-keyword">trait</span> <span class="hljs-title">SomeTrait</span></span> { <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">someOperation</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) -&gt; SomeResult; … }
+</div></code></pre>
+<ul>
+<li>Una struttura dati concreta, come struct od enum, può esplicitamente dichiarare di implementare un dato tratto attraverso il blocco seguente</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-keyword">impl</span> SomeTrait <span class="hljs-keyword">for</span> SomeType { … } 
+</div></code></pre>
+<ul>
+<li>Dato un valore il cui tipo implementa un tratto, è possibile invocare su tale valore i metodi del tratto, con la normale sintassi basata sul ‘.’
+<ul>
+<li>A condizione che il tratto sia stato dichiarato nello stesso crate o che sia stata importato attraverso il costrutto<pre class="hljs"><code><div>   <span class="hljs-keyword">use</span> SomeNamespace::SomeTrait;
+</div></code></pre>
+</li>
+<li>Alcuni tratti (come Clone e Iter) non necessitano di essere importati esplicitamente in quanto fanno parte di una porzione di codice della libreria standard (il cosiddetto preludio) che viene importato automaticamente in ogni crate</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/d.png" alt=""></p>
+<ul>
+<li>Self è una metavariabile : si riferisce al tipo che la implementerà</li>
+</ul>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/e.png" alt=""></p>
+<ul>
+<li>Non so cosa ritornare : interi ritornano zero, stringhe una stringa vuota</li>
+</ul>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/f.png" alt=""></p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/g.png" alt="">
+-Chi implementa il tratto : deve anche dire cos'è il tipo per lui</p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/h.png" alt=""></p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/i.png" alt=""></p>
+<p><img src="file:///c:/Users/rober/Downloads/Politecnico/Magistrale/1_Programmazione_di_sistema/Rust/RustCodici/Codici lezioni/Lezione10/k.png" alt=""></p>
+
+</body>
+</html>
