@@ -21,6 +21,8 @@ let i = t.0; 		       // i contiene il valore 123
 u.1 = 0.0;		       // adesso u contiene (3.14, 0.0)       
 ```
 
+<div style="page-break-after: always;"></div>
+
 ## Puntatori e memoria
  Rust offre diversi modi per rappresentare indirizzi in memoria: **riferimenti, box e puntatori nativi** (gli ultimi si possono usare solamente all’interno di un blocco unsafe). L’uso dei puntatori è semplificato grazie alle garanzie offerte dal compilatore che verifica il possesso ed il tempo di vita delle variabili.
 
@@ -37,6 +39,8 @@ Finché un riferimento mutabile esiste ed è in uso, non è possibile né creare
 
 ## Borrow checker
 E' componente del compilatore in Rust che svolge un ruolo fondamentale nella gestione della memoria e nella prevenzione degli errori legati alle violazioni delle regole di accesso e mutabilità. Si occupa di analizzare il codice sorgente per garantire che i riferimenti rispettino le regole di: **ownership** (un dato può avere un solo proprietario per volta), **borrowing**(mentre un dato è in possesso, è possibile fare dei prestiti, o molteplici immutabili o un unico mutabile) e **lifetime** (un riferimento non può avere un tempo di vita maggiore del proprietario del dato: se ciò dovesse accadere, tutti i riferimenti devono essere distrutti). Dunque, è uno strumento chiave per garantire la sicurezza della memoria senza ricorrere al garbage collector o gestioni manuali della memoria.
+
+<div style="page-break-after: always;"></div>
 
 ## Box
 
@@ -70,7 +74,275 @@ let b = [0; 5];  // b è un array di 5 interi posti  posti a 0
 let l = b.len(); // l vale 5
 let e = a[3];  // e vale 4                           
 ```
+<div style="page-break-after: always;"></div>
 
 ## Slice
 E' un riferimento ad una sequenza di valori consecutivi di un array la cui lunghezza non è nota in fase di compilazione bensì in esecuzione. **Una slice è costituita da due valori consecutivi: il puntatore all’inizio della sequenza e il numero di elementi della sequenza (anche in questo caso, dunque, si parla di fat pointer).**
 Si può modificare il contenuto della slice se l’array o il vec interessato è mutabile: sarà sufficiente dichiarare la slice come un riferimento mutabile. Anche in questo caso non possono coesistere due riferimenti mutabili allo stesso vec/array, anche se non dovessero sovrapporsi.
+
+## Vec < T >
+
+Il tipo Vec < T > rappresenta una sequenza ridimensionabile di elementi di tipo T, allocati sullo heap. Offre una serie di metodi per accedere al suo contenuto e per inserire/togliere valori al suo interno.
+Una variabile di tipo Vec< T > è una tupla formata da tre valori privati: 
+- Un puntatore ad un buffer allocato sullo heap nel quale sono memorizzati gli elementi
+- Un intero privo di segno che indica la dimensione complessiva del buffer
+- Un intero privo di segno che indica quanti elementi sono valorizzati nel buffer
+
+Se si richiede ad un oggetto di tipo Vec< T > di inserire un nuovo elemento, questo verrà memorizzato nel buffer nella prima posizione libera e verrà incrementato l’intero che indica il numero di elementi effettivamente presenti.
+Nel caso in cui il buffer fosse già completo, verrà allocato un nuovo buffer di dimensioni maggiori e il contenuto del buffer precedente sarà riversato in quello nuovo, dove verrà poi anche inserito il nuovo elemento , dopodiché il buffer precedente sarà de-allocato.
+
+
+``` rust
+// Esempio di vec 
+fn useVec() {
+  let mut v:Vec<i32> = Vec::new();
+  v.push(2);
+  v.push(4);
+  let s = &mut v;
+  s[1] = 8;
+}
+
+```
+
+## Stringhe
+
+Rust offre due modi principali di rappresentare le stringhe : 
+- Come array di caratteri (immutabili) con rappresentazione Unicode, memorizzati in un’area statica, rappresentato dal tipo primitivo **str**
+- Come oggetti allocati dinamicamente, utilizzando il tipo **String**
+  
+Le costanti di tipo stringa presenti nel codice sorgente sono racchiuse tra doppi apici **""**.  Il compilatore provvede ad inserirle in un’apposita area statica di memoria, in modo compatto, senza aggiungere alcun terminatore.
+Poiché il tipo primitivo str non è direttamente manipolabile, si accede ad esso **solo tramite uno slice**, di tipo  &str.
+Esso contiene l’indirizzo del primo carattere e la lunghezza della stringa.
+
+ Per questa sua struttura, gli oggetti di tipo &str possono referenziare sia str veri e propri, sia i buffer allocati dinamicamente all’interno del tipo String e, per questo, costituiscono il fondamento dell’interoperabilità tra i due formati.
+
+Gli oggetti di tipo String contengono **un puntatore ad un buffer allocato dinamicamente, l’effettiva lunghezza della stringa e la capacità del buffer**.
+Se la stringa è mutabile e vengono inseriti al suo interno più caratteri di quelli che il buffer può contenere, il buffer viene automaticamente ri-allocato con una capacità maggiore, così da ospitare quanto richiesto.
+Tutti i metodi che sono leciti su un oggetto di tipo &str sono anche disponibili per &String.
+Inoltre, se una funzione accetta un parametro di tipo &str, è possibile passare come argomento corrispondente il riferimento ad un oggetto String
+
+### Operazioni sulle stringhe
+
+- Si crea un oggetto String con le istruzioni 
+``` rust
+let s0 = String::new(); //crea una stringa vuota
+let s1 = String::from(“some text”); //crea una stringa inizializzata
+let s2 = “some text”.to_string(); //equivalente al precedente
+```
+- Si ricava un oggetto di tipo &str da un oggetto String con il metodo
+``` rust
+s2.as_str();
+```
+- Un oggetto String (se mutabile) può essere modificato
+``` rust
+s3.push_str(“This goes to the end”); // aggiunge al fondo
+s3.insert(0, “This goes to the front”); // inserisce alla posizione data
+s3.remove(4); // elimina il carattere alla posizione indicata
+s3.clear();  // svuota la stringa
+```
+- In altri casi si può costruire un altro oggetto String 
+``` rust
+let s4 = s1.to_uppercase();// forza il maiuscolo (ATTENZIONE alla lingua!)
+let s5 = s1.replace(“some”, “  more ”); // sostituisce un blocco 
+let s6 = s1.trim(); // elimina spaziature iniziali e finali
+``` 
+
+<div style="page-break-after: always;"></div>
+
+
+## Le funzioni 
+
+Costituiscono il nucleo principale attorno al quale viene definito il comportamento di un programma . **Una funzione è introdotta dalla parola chiave fn seguita dal nome e dalla lista di argomenti, ciascuno con il relativo tipo, racchiusa tra parentesi tonde**.  Se ritorna un valore diverso da (), la lista degli argomenti è seguita dal simbolo **-> e dal tipo ritornato**.  Il corpo della funzione è racchiuso tra { } ed è composto da istruzioni. 
+L’ultima espressione presente nel corpo, se priva di ‘;’ finale, viene interpretata come valore di ritorno. 
+In alternativa, è possibile utilizzare l’istruzione return seguita dal valore e da ;.
+
+```rust 
+fn add_numbers(x: i32, y: i32) -> i32 {
+    x + y
+}
+
+```
+
+## Istruzioni ed espressioni
+Il corpo di una funzione è costituito da istruzioni e/o espressioni separate da **;**. 
+Una istruzione ha come tipo di ritorno (), un’espressione può restituire un tipo arbitrario. 
+- I costrutti **let …**  e **let mut …** sono istruzioni : creano un legame tra la variabile indicata ed il valore assegnato. 
+- Un blocco racchiuso tra **{...}** è un’espressione. Restituisce il valore corrispondente all’ultima espressione, a condizione che non sia terminata da ;
+
+- Il costrutto **if … else …** è un’espressione : il ramo positivo ed il ramo negativo sono costituiti da blocchi che devono restituire lo stesso tipo di dato. 
+- Il costrutto **loop …** è un’espressione : crea un iterazione infinita che può essere interrotta eseguendo l’istruzione **break** seguita dal valore di ritorno (se presente). Una singola iterazione può essere parzialmente saltata eseguendo l’istruzione **continue**
+
+E’ possibile annidare più costrutti di tipo loop ed interrompere o continuare un particolare livello di annidamento, facendo precedere l’istruzione loop da un’etichetta :
+- L’etichetta è un identificatore preceduto da '
+- Le istruzioni break e continue possono indicare l’etichetta cui fanno riferimento
+  
+L’istruzione **while …** permette di subordinare l’esecuzione del ciclo al verificarsi di una condizione in modo analogo a quanto avviene in altri linguaggi.
+
+L’istruzione  ha una sintassi particolare:
+- **for var in expression { code }** , expression deve restituire un valore che sia (o possa essere convertito in) un iteratore: sono leciti, ad esempio, array, slice e range (nella forma low..high)
+
+
+<div style="page-break-after: always;"></div>
+
+```rust 
+//esempio
+fn main() {
+    'outer: loop {
+        println!("Entrato nel ciclo esterno");
+        'inner: loop {
+            println!("Entrato nel ciclo interno");
+            // La prossima istruzione interromperebbe il ciclo interno
+            //break;
+            // Così si interrompe il ciclo esterno
+            break 'outer;
+        }
+        //Il programma non raggiunge mai questa posizione
+    }
+    println!("Terminato il ciclo esterno);
+}
+
+```
+## Intervalli
+
+Le notazioni **a..b** e **c..=d** indicano, rispettivamente, un intervallo semi-aperto e un intervallo chiuso  .
+Possono essere usati in senso generale, riferendosi al dominio del tipo della variabile oppure possono essere applicati ad una slice, riferendosi all’insieme dei valori leciti.
+Sono possibili diverse  combinazioni :
+- **..** indica tutti i valori possibili per un dato dominio
+- **a..** indica tutti i valori a partire da a (incluso)
+- **..b** indica tutti i valori fino a b (escluso)
+- **..=c** indica tutti i valori fino a c (incluso)
+- **d..e** indica tutti i valori tra d (incluso) ed e (escluso)
+- **f..=g** indica tutti i valori tra f e g (inclusi)
+
+## Esempi di for
+
+```rust
+fn main() {
+    for n in 1..10 {      // Stampa i numeri da 1 a 9
+        println!(“{}”, n); 
+    }
+    let names = ["Bob", "Frank", "Ferris"];
+    for name in names.iter() {  	           // Stampa i tre nomi
+        println(“{}”, name);
+    }
+    for name in &names[ ..=1 ] {  	           // Stampa i primi due nomi
+    println(“{}”, name);
+    }
+    for (i,n) in names.iter().enumerate() {     //stampa indici e nomi
+   println!("names[{}]: {}", i, n);
+    }
+}
+```
+## L'espressione match
+
+L’espressione **match …** permette di eseguire in modo condizionale blocchi di codice confrontando un valore con una serie di pattern alternativi. 
+Essa confronta la struttura del valore con i singoli pattern indicati. 
+Tali pattern possono contenere variabili, che - in caso di corrispondenza delle parti costanti - vengono legate al corrispondente frammento del valore confrontato. 
+L’elenco dei pattern deve essere esaustivo del dominio dell’espressione
+Ciascun pattern è separato dal blocco di codice da eseguire dal simbolo **=>**. 
+Il pattern può essere annotato con una clausola **if …** per limitarne l’applicabilità. I diversi rami sono separati da **,**. 
+Le espressioni di confronto contenute nel pattern possono essere annotate con un identificatore seguito da **@**, per legare il valore confrontato al nome dato, così da poter fare riferimento ad esso nel blocco corrispondente..
+
+L’espressione match offre una sintassi concisa e sofisticata per confrontare valori multipli così come per estrarre valori da tipi complessi. 
+- Per indicare un singolo valore, non occorre nessun operatore.
+- La sintassi **val1 ..= val2** indica un intervallo chiuso.
+- Una barra verticale singola **|** può essere usata per indicare una disgiunzione (or)
+- Il segno di sottolineatura _ corrisponde a qualsiasi valore
+- 
+I pattern sono valutati nell’ordine indicato
+Alla prima corrispondenza, viene valutato il blocco associato, il cui valore diventa il valore dell’espressione complessiva.
+
+```rust 
+let s = match item { 
+    0 => "zero",	 		                   // valore singolo
+    10 ..= 20 => "tra dieci e venti",                   // intervallo inclusivo
+    40 | 80 => "quaranta o ottanta",                    // alternativa
+    _ =>  "altro",                                      // qualunque cosa
+}
+
+```
+
+## Riga di comando
+I parametri si trovano dentro il contenitore **std::env::args**. I valori sono di tipo String. **args.len()** ritorna il numero di parametri.
+
+```rust
+use std::env::args;
+fn main() {
+
+    ...
+    let args: Vec<String> = args.skip(1).collect();
+    if args.len() >0 { //ci sono gli argomenti
+    ..
+    }
+}
+```
+
+## Clap 
+
+La libreria **clap** gestice in modo dichiarativo i parametri passati attraverso la linea di comando. 
+La si include in un crate aggiungendo nel file Cargo.Toml una dipendenza del tipo [depencies] clap ={ version= "4.1.4", features = ["derive"]}.
+
+```rust
+use clap:: Parser;
+
+#[derive (Parser, Debug)]
+#[command(version,long_about = None)]
+struct Args {
+    //Name of the person to greet
+    #[arg(short,long)]
+    name : String,
+    //Number of times to greet
+    #[arg(short,long,default_value_t = 1)]
+    count : u8,
+}
+
+fn main () {
+    let args = Args::parse();
+    for _ in 0..args.count {
+        println!("Hello {}!", args.name)
+    }
+}
+
+
+
+$ demo --help
+
+Usage : demo[EXE] [OPTIONS] --name <NAME>
+
+Options :
+
+-n, --name <NAME> Name of the person to greet
+-c, --count <COUNT> Number of times to greet
+
+$ demo --name ME
+Hello Me!
+```
+<div style="page-break-after: always;"></div>
+
+## I/O da console
+
+Il crate **std::io** contiene la definizione delle strutture dati per accedere ai flussi standard di ingresso/uscita. Questo tipo di operazioni può fallire e di conseguenza tutti i metodi offerti restituiscono un oggetto di tipo **Result < T,Error >** , che incapsula il valore atteso se l'operazione ha avuto successo o un oggetto di tipo Error in caso di fallimento. Per garantire la correttezza del programma occorre gestire esplicitametne l'eventuale errore, verificando il contenuto del valore ritornato tramite il metodo **is_ok()**
+Oppure causare l'interruzione forzata del programma in caso di errore utilizzando il metodo **unwrap** che restituisce , se non c'è stato errore il valore incapsulato,
+Per semplificare le operazioni di scrittura sono disponibili le due macro **print!(...)** e **println!(...)**. Entrambe accettanno una stringa di formato e una serie di parametri da stampare.
+
+```rust
+
+use std::io;
+
+fn main(){
+    let mut s = String::new();
+    if io::stdin().read_line(&mut s ).is_ok(){
+        println!("Got {}",s.trim());
+    }
+    else {
+        println!("Failed to read line!");
+    }
+    // alternativamente
+    io::stdin().read_line(&mut s).unwrap();
+    println!("Got {}",s.trim());
+}
+
+
+```
+
+
