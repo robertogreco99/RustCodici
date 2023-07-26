@@ -201,49 +201,69 @@ pub fn with_details(...) -> Self {...}
 ## Distruttori
 ### C++
 E' uno solo. Si chiama ~nomeclasse.
-Il distruttore viene chiamato automaticamente quando la classe esce dal suo scope. Serve  a fare particolari azioni prima della distruzione.
-![](1.png)
+Il distruttore viene chiamato automaticamente quando la classe esce dal suo scope. Serve a  rilasciare eventuali  risorse contenute nel corpo della classe prima della distruzione.
 ## Paradigma Raii
-![](2.png)
+**Resource Acquisition Is Inialization:** approccio nato in c++. 
+- Le risorse sono incapsulate in una **classe (struttura)** in cui:
+  - il **costruttore** acquisisce le risorse e stabilisce eventuali invarianti, oppure lancia un’eccezione se non può essere fatto
+  - il **distruttore** rilascia le risorse e NON lancia mai eccezioni
+- Si usano le risorse attraverso l’istanza di una classe  RAII-compatibile che:
+  - ha una gestione automatica delle durata di tutte le risorse, oppure
+  - ha un ciclo di vita connesso al ciclo di vita di un altro oggetto (ad es., è parte di esso)
+- In questo contesto, la presenza della semantica del Movimento, garantisce il corretto trasferimento delle risorse, mantenendo la sicurezza del rilascio
+- Oggetti Box, String, Mutex e Vec implementano il paradigma RAII
+
+<div style="page-break-after: always;"></div>
+
 ## Distruttori in rust
 ![](3.png)
 ![](4.png)
+
 ## Metodi statici
-In Rust, è possibile implementare metodi analoghi semplicemente non indicando, come primo parametro, né self né un suo derivato
- Questo permette la creazione di funzioni per la costruzione di un istanza, metodi per la
+In Rust, è possibile implementare metodi analoghi  a quelli di c++ (metodi che non sono legati ad una specifica istanza, ma possono operare sulle istanze della classe ,se ne conoscono l'indirizzo, avendo accesso anche alle componenti private) semplicemente non indicando, come primo parametro, né self né un suo derivato.
+Questo permette la creazione di funzioni per la costruzione di un istanza, metodi per la
 conversione di istanze di altri tipi nel tipo corrente o, semplicemente, l’accesso a funzionalità
 statiche (come nel caso di librerie matematiche o l’accesso in lettura di parametri di
 configurazione)
--  L’esempio tipico è il metodo new. la chiamata in questo caso sarà usando 
+-  L’esempio tipico è il metodo **new**. la chiamata in questo caso sarà usando 
 ``` rust
   <Tipo>::metodo(...)
 ```
+
+<div style="page-break-after: always;"></div>
+
 ## ENUM
 - In Rust, è possibile introdurre tipi enumerativi composti da un semplice valore scalare come in C e C++ o  anche incapsulare, in ciascuna alternativa, una tupla o una struct volta a fornire ulteriori informazioni relative allo specifico valore.
  - Inoltre , è possibile legare metodi ad un’enumerazione aggiungendo un blocco impl.. come nel caso delle struct
-
+ - Ad enum posso associare dei campi ulteriori (ad esempio se NotFound posso associare una stringa che dice cosa non si è trovato )
 ![](5.png)
-- enum grande quanto il più grande dei suoi campi (qua + almeno 1 byte di selettore)
+- enum è grande quanto il più grande dei suoi campi (qua pari a Internal Error + almeno 1 byte di selettore)
 - enum lavora insieme a match
-
 - enum è un tipo somma
-- alle varie alternative dell'enum posso associare dei dati e questo è alla base di molti pattern
+
 
 ## Rappresentazione in memoria
 ![](6.png)
-- Si genera un byte di selezione **tag** che sta  all'inizio ( 1 byte se ho 255 al max selezioni, 2 byte per di più ecc)
+- Si genera un byte di selezione chiamato **tag** che sta  all'inizio ( 1 byte se ho 255 al max selezioni, 2 byte per di più ecc)
 - ho del padding perchè gli interi devono cominciare a multipli di 4
-- qua la struttura è grande 4 + 1 tag + totale per arrivare ad 8
+- qua la struttura è grande 4 + 1 tag + totale per arrivare ad 8 (multiplo di 4)
+
+<div style="page-break-after: always;"></div>
 
 ## Match
 ![](7.png)
 - Viene introdotta s: s{}: se è uno square introduci la variabile s , se è un circle introduci variabile r che corrisponde al corrispettivo nella struct
+
+## Destrutturazione
 - Si usa anche con gli if:
  ![](8.png)
 - Si usa anche con le assegnazioni semplici
  ![](9.png)
  - utilizza la semantica delle assegnazioni
  ![](10.png)
+ 
+ <div style="page-break-after: always;"></div>
+
  ## Enumerazioni generiche
  ![](11.png)
  ![](12.png)
