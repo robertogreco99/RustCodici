@@ -13,8 +13,9 @@ Il compilatore provvede in molti casi a effettuare autonomamente la riscrittura 
   
 ```rust 
   fn f<'a>(p1: &'a i32, p2:&'a i32) { … }
+  //qua il tempo di vita è vincolato al pià breve
   fn f<'a, 'b>(p1: &'a i32, p2:&'b i32) { … }
-  //entrambe raggiungibili nell'intersezioni della vita
+  //qua i tempi di vita sono disgiunti
 ```
 - Nel caso in cui la funzione sia generica, le meta-variabili di tipo vengono indicate dopo gli identificatori del tempo di vita
 
@@ -24,17 +25,18 @@ Il compilatore provvede in molti casi a effettuare autonomamente la riscrittura 
 In tale caso occorre annotare il tipo restituito con la corretta etichetta
 ``` rust
 fn f<'a, 'b>(p1: &'a Foo, p2:&'b Bar) -> &'b i32 { /*…*/ return &p2.y; }
+// qua a e b hanno tipi disgiunti
 //tempo di vita di b è quello di Bar
 ```
 
 - Se la funzione memorizza il riferimento ricevuto in ingresso in una struttura dati, il compilatore deduce che il tempo di vita della struttura in cui il riferimento è memorizzato deve essere incluso o coincidente con il tempo di vita del riferimento.
 Se questo non avviene, il compilatore identifica l’errore e impedisce alla compilazione di avere successo
 
-![](a.png)
+<img src="a.png" alt="drawing" width="600"/>
 
-- Lo scopo degli identificatori relativi al ciclo di vita è duplice:
-  - Per il codice che invoca la funzione (chiamante), essi indicano su quale, tra gli indirizzi in ingresso, è basato il risultato in uscita
-  - Per il codice all’interno della funzione (chiamato), essi garantiscono che vengano restituiti solo indirizzi cui è lecito accedere per (almeno) il tempo di vita indicato
+- Lo scopo degli identificatori relativi al ciclo di vita è **duplice**:
+  - Per il codice che **invoca la funzione** (chiamante), essi indicano su quale, tra gli indirizzi in ingresso, è basato il risultato in uscita
+  - Per il codice **all’interno della funzione** (chiamato), essi garantiscono che vengano restituiti **solo indirizzi cui è lecito accedere** per (almeno) il tempo di vita indicato
 - All’atto dell’invocazione, gli identificatori forniti dal programmatore (o inseriti automaticamente dal compilatore, quando possibile) sono legati all’effettivo intervallo minimo (espresso come insieme di linee di codice) nel quale il valore da cui il prestito è stato preso debba restare bloccato per non violare le assunzioni su cui la funzione è basata
    - Tentativi di modificare il valore originale da cui il prestito è preso prima che il tempo di vita sia trascorso portano ad errori di compilazione che costituiscono la base della robustezza del sistema di possesso e prestito offerto da Rust
 
@@ -43,16 +45,11 @@ Se questo non avviene, il compilatore identifica l’errore e impedisce alla com
   - Rust verifica che il valore a cui si punta abbia un tempo di vita maggiore o uguale del tempo di vita della struttura dati
   - Questo richiede di esplicitare il tempo di vita della struttura rispetto al tempo di vita dei riferimenti in essa contenuti
 - Se una struttura che contiene riferimenti è contenuta, a sua volta, in un’altra struttura, anche quest’ultima deve avere il tempo di vita specificato in modo esplicito
-
 ```rust
 struct User<'a> {
   id: u32,
   name: &'a str,
 }
-```
-<div style="page-break-after: always;"></div>
-
-```rust
 struct Data<'a> { //la stuttura più ampia ha la durata di vita di Uswe
   user: User<'a>,
   password: String,
@@ -64,6 +61,6 @@ struct Data<'a> { //la stuttura più ampia ha la durata di vita di Uswe
 - Se una funzione restituisce un riferimento o un tipo che contiene  direttamente o indirettamente - un riferimento, occorre disambiguare il tempo di vita del valore ritornato
   - Se c’è un solo parametro in ingresso dotato di tempo di vita, Rust assume che quello debba essere il tempo di vita del risultato
   - Se sono presenti più parametri in ingresso con tempo di vita, tocca al programmatore esplicitare quale debba essere il tempo di vita da associare al risultato
-- Nel caso di metodi che accedono a self tramite un riferimento, Rust assume che il tempo di vita da associare al risultato sia quello del riferimento a self
+- **Nel caso di metodi che accedono a self tramite un riferimento, Rust assume che il tempo di vita da associare al risultato sia quello del riferimento a self**
 - Questo parte dal presupposto che se un metodo di un oggetto restituisce un dato preso a prestito (borrow), questo sia stato preso dai dati posseduti dall’oggetto stesso
 
