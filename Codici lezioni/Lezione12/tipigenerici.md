@@ -1,6 +1,6 @@
 # Funzioni generiche
 - Si può definire una funzione in modo che operi su un tipo di dato non ancora precisato
-- è una funziona che opera su un tipo al momento non ancora precisato
+- una funzione generica  è una funziona che opera su un tipo al momento non ancora precisato
 - T rappresenta un tipo che verrà formulato in un certo momento
 
 ```rust
@@ -10,7 +10,7 @@ fn max<T>(t1:T, t2: T) -> T where T : Ord {
 }
 ```
 - ci sono vincoli espliciti : T deve essere confrontabile per ordine (deve implementare il tratto Ord)
-- Borrow checker si occipa di garantire che se viene passayo un valore questo viene corrattamente gestito dal punto di vista del possesso
+- Il borrow checker si occupa di garantire che se viene passato un valore questo viene correttamente gestito dal punto di vista del possesso
 - Nel punto in cui una funzione generica viene invocata il compilatore provvede a dedurre cosa deve essere sostituito al segnaposto T per rendere accettabile il codice
 - se viene incontrata un'altra chiamata con  lo stesso tipo il compilatore riusa la definizione precedente. Se viene trovata la chiamata ma con un tipo differente viene generata una seconda copia specializzata per il particolare tipo (il processo si chiama **monomorfizzazione** : all'inizio ne ho uno e poi ne ho più copie)
  
@@ -33,8 +33,8 @@ Questo processo prende il nome di monomorfizzazione
 
 ## Sintassi dei tipi generici
 - Rust offre due modi per specificare la sintassi dei vincoli sui tipi generici :
-  1. Una versione compatta <T: SomeTrait>
-  2. La versione estesa <T> … where T: SomeTrait
+  1. Una versione compatta **< T : SomeTrait>**
+  2. La versione estesa **< T > … where T: SomeTrait**
 - In entrambi i casi, se è necessario indicare che il tipo deve implementare più tratti, questi possono essere combinati con il segno +
 ![](b.png)
 - M deve avere il tratto Mapper  e Serializer, R  Reducer e Serialize
@@ -50,12 +50,15 @@ fn dynamic_process(w: &mut dyn Write) { … }
 // w è grande 16byte : contiene un doppio puntatore : 
 // un puntatore all'istanza e uno alla vtable del tratto write
 //compilata una volta sola, devo per forza passare dalla vtable
+//riduce il codice macchina ma riduce il costo di invocazione
 fn generic_process<T>(w: &mut T) where T:Write { … }
-/* permette di prende in mano qualunque tipo T a patto che implemti il tratto Write */ 
+/* permette di prende in mano qualunque tipo T a patto che implementi il tratto Write */ 
+// riceve un puntatore normale e non ha overhead di chiamata
 //compilata tante volte quante sono le chiamate
+//aumenta il codice macchina ma non il costo di invocazione
 ```
 - Gli oggetti-tratto richiedono l’uso di fat pointer per permetterne l’accesso ma non richiedono la duplicazione del codice dovuta al processo di monomorfizzazione.
 - L’uso di strutture dati generiche, in generale, porta a codice più efficiente  Non solo perché le chiamate alle funzioni non necessitano di transitare per la VTABLE, ma perché il compilatore, conoscendo il tipo concreto in fase di monomorfizzazione, può generare codice più compatto, valutando il risultato dell’elaborazione delle parti costanti in fase di compilazione e sfruttare tecniche di code inlining per ridurre l’impatto dell’invocazione di funzioni
-- Non tutti i tratti permettono di definire oggetti-tratto
+-  tutti i tratti permettono di definire oggetti-tratto 
 Occorre infatti che il tratto non definisca alcun metodo statico (ovvero che non utilizza self, &self, …, come primo parametro)
 - Non è possibile definire un oggetto-tratto legato a più tratti disgiunti. Mentre è possibile, in una funzione generica, vincolare una meta-variabile ad implementare più tratti
